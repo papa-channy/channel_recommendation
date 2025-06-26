@@ -1,0 +1,46 @@
+# ==================================================
+#        애플리케이션 기본 설정 (default_config.yml)
+# ==================================================
+# 이 파일에는 민감 정보를 포함하지 않습니다.
+
+# --- 파일 및 모델 경로 ---
+paths:
+  # 데이터 폴더 내의 파일 경로
+  ratings_data: "data/ratings.csv"
+  movies_data: "data/movies.csv"
+  
+  # 학습된 Keras 모델 파일 경로
+  model_path: "data/ncf_model_light.keras"
+
+  # 문장 임베딩 모델(HuggingFace 모델명)
+  embedding_model_name: "jhgan/ko-sroberta-multitask"
+
+# --- 외부 서비스 URL ---
+urls:
+  schedule_url: "https://www. 편성표정보-웹사이트-주소.com/" # 예시 URL
+
+# --- LLM 프롬프트 템플릿 ---
+prompts:
+  labeling_prompt: |
+    다음은 {content_type}의 제목과 줄거리입니다.
+    제목: "{title}"
+    줄거리: "{overview}"
+    이 콘텐츠의 핵심적인 특징, 장르, 분위기를 나타내는 키워드 5개를 '#키워드' 형식의 리스트로 만들어주세요.
+
+# --- 페르소나 정의 ---
+# Streamlit UI에서 선택할 수 있는 페르소나 목록
+personas:
+  - name: "김코딩"
+    description: "밤샘 코딩을 즐기는 개발자. SF와 스릴러 영화를 좋아하며, 복잡한 두뇌 싸움을 즐긴다."
+    persona_id: "dev_kim"
+    favorite_genres: ["Sci-Fi", "Thriller", "Mystery"]
+    
+  - name: "나로맨스"
+    description: "주말엔 로맨틱 코미디와 함께. 가슴 따뜻해지는 드라마를 선호하는 감성적인 직장인."
+    persona_id: "romance_na"
+    favorite_genres: ["Romance", "Comedy", "Drama"]
+    
+  - name: "이액션"
+    description: "스트레스는 화려한 액션 영화로! 스케일 큰 블록버스터와 히어로물을 좋아한다."
+    persona_id: "action_lee"
+    favorite_genres: ["Action", "Adventure", "Fantasy"]
