@@ -1,0 +1,25 @@
+# --- 기본 의존성 ---
+python-dotenv==1.0.1
+pandas==2.2.2
+numpy==1.26.4
+tensorflow==2.16.1
+scikit-learn==1.5.0
+google-generativeai==0.5.4
+sentence-transformers==3.0.1
+selenium==4.21.0
+beautifulsoup4==4.12.3
+webdriver-manager==4.0.1
+SQLAlchemy==2.0.30
+pymysql==1.1.1
+alembic==1.13.1
+pydantic==2.7.4
+PyYAML==6.0.1
+
+# --- Streamlit 앱 실행용 (app group) ---
+streamlit==1.35.0
+
+# --- 개발 및 테스트용 (dev group) ---
+pytest==8.2.2
+flake8==7.0.0
+black==24.4.2
+mypy==1.10.0
