@@ -1,0 +1,8 @@
+paths:
+  movielens: data/movielens_sample.csv
+  embedding_model_name: all-MiniLM-L6-v2
+personas:
+  demo:
+    favorite_genres: ['Action', 'Comedy']
+default_labels:
+  - demo
