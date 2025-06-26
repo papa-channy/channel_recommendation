@@ -1,0 +1,8 @@
+pandas
+pydantic
+python-dotenv
+sentence-transformers
+streamlit
+selenium
+beautifulsoup4
+pytest
