@@ -1,2 +1,0 @@
-userid/movieId/rating/timestamp(1225734739)
-movieId/title/genres

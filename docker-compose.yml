@@ -1,36 +1,49 @@
 version: '3.8'
 
 services:
+  # MySQL 데이터베이스 서비스
   db:
     image: mysql:8.0
     container_name: recommendation_db
+    platform: linux/amd64 # Apple Silicon (M1/M2) 환경 호환성을 위해 추가
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_DATABASE: ${DB_NAME:-airflow_db}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3307:3306"
+      - "${DB_PORT}:3306"
     volumes:
+      # 초기 스키마 설정을 위한 .sql 파일 마운트
       - ./docker/db/init:/docker-entrypoint-initdb.d
+      # 데이터 영속성을 위한 볼륨
+      - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password
 
+  # Streamlit 애플리케이션 서비스
   app:
     build:
       context: .
-      dockerfile: ./docker/app/Dockerfile # Dockerfile 경로 가정
+      dockerfile: ./docker/app/Dockerfile
     container_name: recommendation_app
     env_file:
       - .env
     ports:
-      - "8502:8502" # Streamlit 포트
+      - "8502:8502"
     volumes:
+      # 개발 시 코드 변경사항 즉시 반영을 위한 마운트
       - .:/app
     depends_on:
       db:
-        condition: service_healthy
-    command: ["streamlit", "run", "src/presentation/app.py", "--server.port=8502", "--server.address=0.0.0.0"]
+        condition: service_healthy # db 서비스가 정상 실행된 후 app 서비스 시작
+    command: ["poetry", "run", "streamlit", "run", "src/presentation/app.py", "--server.port=8502", "--server.address=0.0.0.0"]
 
+# 데이터베이스 데이터 영속성을 위한 명명된 볼륨 정의
 volumes:
   db_data:
