@@ -63,3 +63,13 @@ class RecommendChannelsUseCase:
             preference_cluster=labelled_movies,
             recommended_programs=recommended_programs,
         )
+
+    def get_next_up_recommendations(
+        self, result: RecommendationResultDTO, top_n: int = 3
+    ) -> List[RecommendedProgramDTO]:
+        """Return top N programs sorted by similarity."""
+        return sorted(
+            result.recommended_programs,
+            key=lambda x: x.similarity_score,
+            reverse=True,
+        )[:top_n]

@@ -44,7 +44,22 @@ st.title('TV Channel Recommendation')
 persona = st.selectbox('Persona', options=['demo'])
 date = st.date_input('Date')
 
+if 'results' not in st.session_state:
+    st.session_state['results'] = None
+
 if st.button('Recommend'):
     with st.spinner('Running recommendation...'):
-        result = use_case.execute(persona, date.strftime('%Y-%m-%d'))
-        st.write(result.json())
+        st.session_state['results'] = use_case.execute(
+            persona, date.strftime('%Y-%m-%d')
+        )
+
+if st.session_state['results'] is not None:
+    st.subheader('Recommended Programs')
+    for prog in st.session_state['results'].recommended_programs:
+        st.write(f"{prog.start_time} {prog.channel} - {prog.title}")
+
+    if st.button('Show Next Up'):
+        next_up = use_case.get_next_up_recommendations(st.session_state['results'])
+        st.subheader('Next Up')
+        for prog in next_up:
+            st.write(f"{prog.start_time} {prog.channel} - {prog.title}")
