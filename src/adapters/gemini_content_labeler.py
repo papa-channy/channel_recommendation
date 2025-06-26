@@ -2,7 +2,7 @@ import os
 from typing import List
 from dotenv import load_dotenv
 from src.domain.interfaces import ContentLabelerInterface
-from src.infrastructure.cache_manager import CacheManager
+from src.infrastructure.redis_cache_manager import CacheManager
 
 class GeminiContentLabeler(ContentLabelerInterface):
     def __init__(self, config: dict, cache: CacheManager | None = None):

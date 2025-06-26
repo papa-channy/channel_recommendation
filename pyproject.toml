@@ -1,0 +1,57 @@
+# ===================================================================
+#          Poetry 설정 파일 (pyproject.toml)
+# ===================================================================
+#
+# 이 파일 하나로 프로젝트의 모든 Python 의존성을 관리합니다.
+#
+
+[tool.poetry]
+name = "ai-tv-recommendation"
+version = "0.1.0"
+description = "LLM과 딥러닝을 활용한 개인 맞춤형 AI TV 채널 추천 시스템"
+authors = ["Chan Park <chan.park@example.com>", "Myungjae Kim <mj.kim@example.com>", "Euichul Jung <ec.jung@example.com>", "Seunghwan Yoo <sh.yoo@example.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+# --- 공통 핵심 라이브러리 ---
+pandas = "^2.2.2"
+numpy = "^1.26.4"
+pydantic = "^2.7.4"
+pyarrow = "^16.1.0"
+python-dotenv = "^1.0.1"
+google-generativeai = "^0.5.4"
+sentence-transformers = "^3.0.1"
+torch = "^2.3.1"
+PyYAML = "^6.0.1"
+SQLAlchemy = "^2.0.30"
+pymysql = "^1.1.1"
+alembic = "^1.13.1"
+selenium = "^4.21.0"
+beautifulsoup4 = "^4.12.3"
+webdriver-manager = "^4.0.1"
+
+# --- [app] 그룹: Streamlit 애플리케이션용 ---
+# 이 그룹은 Streamlit UI 실행에만 필요합니다.
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.35.0"
+
+# --- [airflow] 그룹: Airflow 스케줄러용 ---
+# 이 그룹은 Airflow DAG 실행 환경에만 필요합니다.
+[tool.poetry.group.airflow.dependencies]
+apache-airflow = { version = "^2.9.2", extras = ["mysql"] }
+
+# --- [dev] 그룹: 개발 및 테스트용 ---
+# 로컬 개발 환경과 CI 파이프라인에서만 사용됩니다.
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+flake8 = "^7.0.0"
+black = "^24.4.2"
+mypy = "^1.10.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.main.api"

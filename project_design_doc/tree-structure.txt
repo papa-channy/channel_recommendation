@@ -1,0 +1,76 @@
+tv_recommendation_project/
+├── .env.example                # 1. 개발 환경 설정을 위한 환경 변수 예시 파일
+├── .gitignore                  # Git 추적 제외 목록
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # GitHub Actions CI 파이프라인 (테스트/린트 자동화)
+├── alembic.ini                 # 2. Alembic 마이그레이션 설정 파일
+├── airflow/
+│   ├── dags/                   # Airflow DAG 정의 파일
+│   │   ├── dag_fetch_iptv_schedule.py
+│   │   └── dag_retrain_recommendation_model.py
+│   ├── logs/                   # Airflow 로그 저장 디렉토리
+│   └── plugins/                # Airflow 커스텀 플러그인
+├── config/
+│   └── default_config.yml      # 민감하지 않은 기본 설정 (파일 경로, 모델 파라미터 등)
+├── data/
+│   ├── processed/
+│   │   └── movielens.parquet   # 전처리 완료된 데이터
+│   └── raw/
+│       └── movielens_latest/   # 원본 데이터셋
+├── docker/                     # 3. 모든 Dockerfile 중앙 관리
+│   ├── airflow/
+│   │   └── Dockerfile
+│   ├── app/
+│   │   └── Dockerfile          # Streamlit 앱 Dockerfile
+│   └── db/
+│       └── init/
+│           └── 01_init_schema.sql # Docker 컨테이너 생성 시 초기 DB 스키마 생성
+├── alembic/                    # 2. 데이터베이스 스키마 마이그레이션 관리
+│   ├── versions/               # 마이그레이션 스크립트(버전) 자동 생성 위치
+│   │   └── xxxx_create_initial_tables.py
+│   ├── env.py                  # Alembic 실행 환경 설정
+│   └── script.py.mako        # 마이그레이션 스크립트 템플릿
+├── notebooks/                  # 데이터 탐색 및 모델 실험용 Jupyter Notebook
+├── poetry.lock                 # 4. 의존성 버전 잠금 파일
+├── pyproject.toml              # 4. Poetry 기반 통합 의존성 및 프로젝트 설정
+├── README.md                   # 프로젝트 개요 및 실행 방법 안내
+├── saved_models/
+│   └── ncf_model_latest.pth    # 학습된 딥러닝 모델 가중치
+├── src/                        # 5. 모든 Python 소스 코드 (Clean Architecture)
+│   ├── adapters/               # << Infrastructure Layer: 인터페이스 구현체 (어댑터) >>
+│   │   ├── __init__.py
+│   │   ├── db_repository.py    # (변경 제안) SQL Alchemy를 사용한 DB 상호작용 구현
+│   │   ├── default_persona_generator.py
+│   │   ├── file_data_loader.py
+│   │   ├── gemini_content_labeler.py
+│   │   ├── selenium_schedule_crawler.py
+│   │   └── torch_rating_predictor.py
+│   ├── domain/                 # << Domain Layer: 핵심 비즈니스 로직 >>
+│   │   ├── __init__.py
+│   │   ├── dtos.py             # Pydantic 기반 데이터 전송 객체
+│   │   ├── interfaces/         # 추상 인터페이스 (포트)
+│   │   │   ├── __init__.py
+│   │   │   ├── content_labeler_interface.py
+│   │   │   ├── data_loader_interface.py
+│   │   │   ├── persona_generator_interface.py
+│   │   │   ├── rating_predictor_interface.py
+│   │   │   ├── repository_interface.py # (변경 제안) DB 상호작용 추상화
+│   │   │   └── schedule_crawler_interface.py
+│   │   └── use_cases/          # 시스템의 핵심 비즈니스 로직
+│   │       ├── __init__.py
+│   │       └── recommend_channels_use_case.py
+│   ├── infrastructure/         # << Infrastructure Layer: 외부 서비스 연동 등 >>
+│   │   └── redis_cache_manager.py # (확장 예시) Redis 캐시 관리자
+│   ├── presentation/           # << Presentation Layer: UI >>
+│   │   ├── __init__.py
+│   │   └── app.py              # Streamlit 애플리케이션 진입점
+│   └── utils/                  # 범용 헬퍼 함수
+│       └── path_helper.py
+└── tests/                      # 테스트 코드 (src와 구조를 동일하게)
+    ├── adapters/
+    │   └── test_default_persona_generator.py
+    ├── domain/
+    │   └── use_cases/
+    │       └── test_recommend_channels_use_case.py
+    └── conftest.py             # Pytest 공용 Fixture 설정

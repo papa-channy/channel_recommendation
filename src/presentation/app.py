@@ -10,7 +10,7 @@ from src.adapters import (
     GeminiContentLabeler,
     SeleniumScheduleCrawler,
 )
-from src.infrastructure.cache_manager import CacheManager
+from src.infrastructure.redis_cache_manager import CacheManager
 from src.domain.use_cases.recommend_channels_use_case import RecommendChannelsUseCase
 
 @st.cache_resource
