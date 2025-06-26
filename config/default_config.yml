@@ -1,8 +1,90 @@
+# ==============================================================================
+# AI TV 추천 시스템: 전역 기본 설정 파일 (V2.0)
+# ------------------------------------------------------------------------------
+# 본 파일은 민감 정보를 포함하지 않으며, 안전하게 공유 및 버전 관리될 수 있습니다.
+# 모든 API 키 및 비밀 정보는 프로젝트 루트의 .env 파일에서 관리됩니다.
+# ==============================================================================
+
+# 1. 경로 설정 (Path Configurations)
+# ------------------------------------------------
+# 프로젝트 내 모든 파일 및 디렉토리의 상대 경로를 정의합니다.
 paths:
-  movielens: data/movielens_sample.csv
-  embedding_model_name: all-MiniLM-L6-v2
-personas:
-  demo:
-    favorite_genres: ['Action', 'Comedy']
-default_labels:
-  - demo
+  # 데이터 경로
+  movielens_raw_dir: "data/raw/movielens/"
+  processed_dir: "data/processed/"
+  persona_profiles: "data/personas/persona_profiles.json"
+  dummy_data_dir: "data/dummy_data/"
+  log_dir: "logs/"
+
+  # 데이터베이스 및 캐시 경로
+  database_uri: "sqlite:///data/database/main.db" # Alembic 마이그레이션을 위한 URI
+  cache_db_uri: "sqlite:///data/cache/llm_labels.db" # LLM 라벨 캐시 DB
+
+  # 모델 경로
+  rating_model_path: "saved_models/rating_predictor_model.pth"
+  embedding_model_name: "jhgan/ko-sroberta-multitask" # 한국어 특화 Sentence Transformer 모델
+
+# 2. 모델 파라미터 (Model Parameters)
+# ------------------------------------------------
+# AI/ML 모델의 학습 및 추론에 사용되는 하이퍼파라미터를 정의합니다.
+
+rating_model_params:
+  # 신경망 협업 필터링 (NCF) 모델 구조
+  embedding_dim: 128
+  hidden_layers: [256, 128, 64] # MLP 레이어의 뉴런 수
+  dropout_rate: 0.2
+
+  # 모델 학습 파라미터
+  learning_rate: 0.001
+  epochs: 50
+  batch_size: 1024
+
+# 3. 추천 엔진 파라미터 (Recommendation Engine Parameters)
+# ------------------------------------------------
+# 추천 로직의 핵심 동작을 제어하는 파라미터를 정의합니다.
+
+recommendation_params:
+  # 페르소나의 잠재 선호도를 파악하기 위해 예측 평점이 높은 상위 N개의 영화를 선정
+  top_k_movies: 20
+
+# 4. LLM 라벨링 파라미터 (LLM Labeling Parameters)
+# ------------------------------------------------
+# 콘텐츠 라벨링을 위한 LLM의 동작을 제어합니다.
+
+llm_params:
+  model_name: "gemini-1.5-flash-latest"
+  temperature: 0.7 # 생성 결과의 다양성 제어 (0.0 ~ 1.0)
+  max_retries: 3   # API 호출 실패 시 최대 재시도 횟수
+  
+  # LLM에 전달할 프롬프트 템플릿. {title}과 {overview}가 동적으로 채워집니다.
+  prompt_template: |
+    너는 콘텐츠의 숨겨진 의미와 특징을 분석하는 전문적인 콘텐츠 큐레이터다.
+    주어진 '제목'과 '줄거리'를 바탕으로, 이 콘텐츠를 가장 잘 설명할 수 있는 10개의 핵심 '라벨'을 생성해라.
+    라벨은 반드시 다음 카테고리를 포함해야 한다:
+    - **핵심 장르 (2개)**: (예: #스릴러, #범죄)
+    - **핵심 주제 (2개)**: (예: #가족의소중함, #정의구현)
+    - **핵심 플롯/소재 (3개)**: (예: #시간여행, #천재해커, #계약결혼)
+    - **분위기/감성 (2개)**: (예: #가슴따뜻한, #손에땀을쥐는)
+    - **특징 (1개)**: (예: #실화기반)
+    
+    결과는 반드시 JSON 형식의 리스트로 반환해야 한다. 예: ["#스릴러", "#범죄", ...].
+    다른 설명은 절대 추가하지 마라.
+    
+    ---
+    제목: {title}
+    줄거리: {overview}
+    ---
+    
+    JSON:
+
+# 5. 웹 크롤러 파라미터 (Web Crawler Parameters)
+# ------------------------------------------------
+# IPTV 편성표를 수집하기 위한 크롤러의 설정을 정의합니다.
+
+crawler_params:
+  # 크롤링 대상 URL (예시: LG U+ 편성표 페이지)
+  target_url: "https://www.uplus.co.kr/ent/ltef/RetrieveTvSchedule.hpi"
+  # 차단을 피하기 위한 User-Agent 설정
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  # 크롤링한 편성표 데이터 캐시 유효 시간 (초 단위, 21600초 = 6시간)
+  cache_ttl_seconds: 21600

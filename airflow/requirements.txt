@@ -1,1 +1,2 @@
-pymysql
+apache-airflow
+pendulum # Airflow에서 날짜/시간을 더 쉽게 다루기 위해 사용
